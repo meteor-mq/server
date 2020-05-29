@@ -14,6 +14,7 @@ func TestKrand(t *testing.T) {
 	t.Log("upper: " + string(Krand(16, RuleKindUpper)))
 	t.Log("all:   " + string(Krand(16, RuleKindAll)))
 	t.Log(rand.Intn(3))
+	t.Log(byte(49))
 	// type args struct {
 	// 	size int
 	// 	kind int

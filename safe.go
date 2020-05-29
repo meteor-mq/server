@@ -17,6 +17,7 @@ const (
 )
 
 // Krand is random string func
+// ASCII CODE
 func Krand(size int, kind int) []byte {
 	ikind, kinds, result := kind, [][]int{[]int{10, 48}, []int{26, 97}, []int{26, 65}}, make([]byte, size)
 	// don't use underscores in Go names; var is_all should be isAll ！！！
