@@ -42,3 +42,11 @@ func NewDefaultConfig() *Option {
 		Password: DefaultPassword,
 	}
 }
+
+// NewConfig customize server config option
+// Example Code :
+// op := mq.NewConfig()
+// op.Password = "XXXXXXX"
+func NewConfig() *Option {
+	return &Option{}
+}
