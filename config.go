@@ -9,7 +9,7 @@ var (
 	// DefaultAllow default allow address
 	DefaultAllow = make([]string, 0, 8)
 	// DefaultPassword default password
-	DefaultPassword = string(randomString())
+	DefaultPassword = string(Krand(16, RuleKindAll))
 )
 
 const (
