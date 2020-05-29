@@ -5,13 +5,16 @@
 
 package server
 
+import (
+	"math/rand"
+	"time"
+)
+
 var (
 	// DefaultAllow default allow address
 	DefaultAllow = make([]string, 0, 8)
 	// DefaultPassword default password
-	DefaultPassword = func() string {
-		return "123456"
-	}()
+	DefaultPassword = string(randomString())
 )
 
 const (
@@ -49,4 +52,15 @@ func NewDefaultConfig() *Option {
 // op.Password = "XXXXXXX"
 func NewConfig() *Option {
 	return &Option{}
+}
+
+// Random Password
+func randomString() []byte {
+	rand.Seed(time.Now().UnixNano())
+	// set string length
+	bytes := make([]byte, 0, 16)
+	for i := 0; i < cap(bytes); i++ {
+		bytes = append(bytes, byte(rand.Intn(26)+65))
+	}
+	return bytes
 }

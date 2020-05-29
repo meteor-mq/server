@@ -43,3 +43,15 @@ func errorConfig() *Option {
 		Password: "0000000",
 	}
 }
+
+func Test_randomString(t *testing.T) {
+	t.Log(string(randomString()))
+	t.Log(randomString())
+	//  go test -v -run=Test_randomString
+	// === RUN   Test_randomString
+	//     Test_randomString: config_test.go:48: OSHWZSWPRDLYRRJD
+	//     Test_randomString: config_test.go:49: [67 83 66 77 73 88 67 86 76 68 67 85 77 68 81 78]
+	// --- PASS: Test_randomString (0.00s)
+	// PASS
+	// ok      github.com/fast-mq/server       0.004s
+}
