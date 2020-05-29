@@ -10,8 +10,8 @@ import (
 	"testing"
 )
 
-// TestNewDefaultConfig  go test -v -run=TestNewDefaultConfig/error
-func TestNewDefaultConfig(t *testing.T) {
+// TestDefaultConfig  go test -v -run=TestDefaultConfig/error
+func TestDefaultConfig(t *testing.T) {
 
 	tests := []struct {
 		name string
@@ -20,7 +20,7 @@ func TestNewDefaultConfig(t *testing.T) {
 		//cannot use "c1" (type string) as type struct { name string; want *Option } in slice literal
 		{
 			name: "success",
-			want: NewDefaultConfig(),
+			want: DefaultConfig(),
 		},
 		{
 			name: "error",
@@ -29,7 +29,7 @@ func TestNewDefaultConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewDefaultConfig(); !reflect.DeepEqual(got, tt.want) {
+			if got := DefaultConfig(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewDefaultConfig() = %v, want %v", got, tt.want)
 			}
 		})

@@ -31,8 +31,8 @@ type Option struct {
 	Password string
 }
 
-// NewDefaultConfig genreate server option default cofing
-func NewDefaultConfig() *Option {
+// DefaultConfig genreate server option default cofing
+func DefaultConfig() *Option {
 	return &Option{
 		Address:  "127.0.0.1",
 		Port:     DefaultPort,
