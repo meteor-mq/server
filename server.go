@@ -5,6 +5,14 @@
 
 package server
 
+import (
+	"os"
+
+	klog "github.com/higker/logker"
+)
+
+var Log klog.Logger
+
 // MQServer is message queue.
 type MQServer struct {
 	// Bind IP
@@ -15,4 +23,15 @@ type MQServer struct {
 	AllowIP []string
 	// Auth password
 	Password string
+}
+
+func init() {
+	// Custom logging message template
+	format := "{level} - 时间 {time}  - 位置 {position} - 消息 {message}"
+	logger, err := klog.NewClog(klog.DEBUG, klog.Shanghai, format, klog.InitAsync(klog.Qs3w))
+	if err != nil {
+		panic("init logger failed !!")
+		os.Exit(1)
+	}
+	Log = logger
 }

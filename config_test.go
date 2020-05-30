@@ -55,3 +55,7 @@ func Test_randomString(t *testing.T) {
 	// PASS
 	// ok      github.com/fast-mq/server       0.004s
 }
+
+func Test_loadConfig(t *testing.T) {
+	t.Log(loadConfig("/Users/ding/Documents/GO_CODE_DEV/src/server/config.ini"))
+}

@@ -5,6 +5,12 @@
 
 package server
 
+import (
+	"gopkg.in/ini.v1"
+	"os"
+	"strings"
+)
+
 var (
 	// DefaultAllow default allow address
 	DefaultAllow = make([]string, 0, 8)
@@ -14,7 +20,7 @@ var (
 
 const (
 	// DefaultPort default port
-	DefaultPort = 9598
+	DefaultPort = "9598"
 	// DefaultAddress  default address
 	DefaultAddress = "127.0.0.1"
 )
@@ -24,7 +30,7 @@ type Option struct {
 	// Bind IP
 	Address string
 	// Bind Port 0-65535
-	Port uint16
+	Port string
 	// Allow access IP
 	AllowIP []string
 	// Auth password
@@ -47,4 +53,22 @@ func DefaultConfig() *Option {
 // op.Password = "XXXXXXX"
 func NewConfig() *Option {
 	return &Option{}
+}
+
+// loadConfigurationFile
+func loadConfig(path string) Option {
+	cfg, err := ini.Load(path)
+    if err != nil {
+    	Log.Error("loading config file error:%s",err)
+    	os.Exit(1)
+    }
+	return Option{
+		Address: cfg.Section("option").Key("BindIP").String(),
+		Port: cfg.Section("option").Key("BindPort").String(),
+		AllowIP: func() []string {
+			all := cfg.Section("option").Key("AllowIP").String()
+			return strings.Split(all, ",")
+		}(),
+		Password: cfg.Section("option").Key("Password").String(),
+	}
 }
