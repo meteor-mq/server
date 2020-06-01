@@ -5,9 +5,7 @@
 
 package server
 
-import (
-	"github.com/fatih/color"
-)
+import "github.com/fatih/color"
 
 const (
 	verison   = "0.0.1"
@@ -21,9 +19,7 @@ const (
 
 // echoInfo output Application info
 func echoInfo() {
-	bg := color.New(color.BgBlue)
-	bg.Add(color.FgBlack)
-	color.Red(bannerStr, bg.Sprintf("V: %s", verison)+"\n")
+	color.Red(bannerStr, colors(color.BgBlue, color.FgBlack).Sprintf("V: %s", verison)+"\n")
 	greenInfo("Using config file ~/.config/code-server/config.yaml")
 }
 
@@ -37,8 +33,9 @@ func echoInfo() {
 // info    - Not serving HTTPS
 
 func greenInfo(item string) {
-	bg := color.New(color.BgGreen)
-	bg.Add(color.FgBlack)
-	bg.Print("「 INFO 」")
+	colors(color.BgGreen, color.FgBlack).Print("「 INFO 」")
 	color.White(item)
+}
+func colors(back, fg color.Attribute) *color.Color {
+	return color.New(back).Add(fg)
 }
