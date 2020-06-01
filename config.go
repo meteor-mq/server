@@ -6,9 +6,10 @@
 package server
 
 import (
-	"gopkg.in/ini.v1"
 	"os"
 	"strings"
+
+	"gopkg.in/ini.v1"
 )
 
 var (
@@ -58,13 +59,13 @@ func NewConfig() *Option {
 // loadConfigurationFile
 func loadConfig(path string) Option {
 	cfg, err := ini.Load(path)
-    if err != nil {
-    	Log.Error("loading config file error:%s",err)
-    	os.Exit(1)
-    }
+	if err != nil {
+		Log.Error("loading config file error:%s", err)
+		os.Exit(1)
+	}
 	return Option{
 		Address: cfg.Section("option").Key("BindIP").String(),
-		Port: cfg.Section("option").Key("BindPort").String(),
+		Port:    cfg.Section("option").Key("BindPort").String(),
 		AllowIP: func() []string {
 			all := cfg.Section("option").Key("AllowIP").String()
 			return strings.Split(all, ",")
