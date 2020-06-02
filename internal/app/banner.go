@@ -8,8 +8,6 @@ package app
 import "github.com/fatih/color"
 
 const (
-	// Verison app version
-	Verison   = "0.0.1"
 	bannerStr = "\n" +
 		"   ___         _             ____ \n" +
 		"  / __\\_ _ ___| |_  /\\/\\    /___ \\\n" +
@@ -36,8 +34,8 @@ const (
 // EchoInfo output Application info
 func EchoInfo() {
 	color.Red(bannerStr, colors(color.BgYellow, color.FgBlack).Sprintf("V: %s", Verison)+"\n")
-	greenInfo("Website: https://mq.ibyte.me")
-	greenInfo("Using config file: ~/.config/code-server/config.ini")
+	greenInfo(Website)
+	greenInfo(ConfigFile)
 }
 
 // info  Wrote default config file to ~/.config/code-server/config.yaml

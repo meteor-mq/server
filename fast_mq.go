@@ -9,10 +9,10 @@
 //  |     \   / __ \_\___ \  |  | /    Y    \/   \_/.  \
 //  \___  /  (____  /____  > |__| \____|__  /\_____\ \_/
 //      \/        \/     \/               \/        \__>
+// LOGO IMAGE : https://avatars0.githubusercontent.com/u/48612456?s=200&v=4
 // FastMQ is light weight message queue middleware. 🚀
 // FastMQ 一款轻量级的消息队列服务中间件通过Go语言实现。👨‍💻‍
 // Author : SDing <deen.job@qq.com> We hope you can join!🎉🎉
-
 package main
 
 import (
@@ -25,11 +25,12 @@ import (
 )
 
 func main() {
+
 	appCli := cli.NewApp()
 
-	appCli.Name = "Fast Message Queue"
+	appCli.Name = app.AppCliName
 
-	appCli.Usage = "is light weight message queue middleware 🚀."
+	appCli.Usage = app.AppCliUsage
 
 	appCli.Version = app.Verison
 
