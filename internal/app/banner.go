@@ -21,7 +21,8 @@ const (
 // EchoInfo output Application info
 func EchoInfo() {
 	color.Red(bannerStr, colors(color.BgBlue, color.FgBlack).Sprintf("V: %s", Verison)+"\n")
-	greenInfo("Using config file ~/.config/code-server/config.yaml")
+	greenInfo("Website: https://mq.ibyte.me")
+	greenInfo("Using config file: ~/.config/code-server/config.int")
 }
 
 // info  Wrote default config file to ~/.config/code-server/config.yaml

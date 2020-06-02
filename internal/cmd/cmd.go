@@ -6,7 +6,10 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/fast-mq/server/internal/app"
+	"github.com/higker/logker"
 	"github.com/urfave/cli"
 )
 
@@ -22,6 +25,8 @@ var Start = cli.Command{
 	Action: func(c *cli.Context) error {
 		//c.Args().First()
 		app.EchoInfo()
+		logker.Debug("%s", "application start running.")
+		time.Sleep(20 * time.Second)
 		return nil
 	},
 }

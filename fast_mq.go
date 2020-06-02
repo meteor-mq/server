@@ -10,25 +10,11 @@ import (
 
 	"github.com/fast-mq/server/internal/app"
 	"github.com/fast-mq/server/internal/cmd"
-	klog "github.com/higker/logker"
+	"github.com/higker/logker"
 	"github.com/urfave/cli"
 )
 
-// Log logger
-var Log klog.Logger
-
-func init() {
-	// Custom logging message template
-	format := "{level} - Time {time}  - POS {position} - MSG {message}"
-	logger, err := klog.NewClog(klog.DEBUG, klog.Shanghai, format, klog.InitAsync(klog.Qs3w))
-	if err != nil {
-		panic("init logger failed !!")
-	}
-	Log = logger
-}
-
 func main() {
-
 	appCli := cli.NewApp()
 
 	appCli.Name = "Fast Message Queue"
@@ -41,9 +27,8 @@ func main() {
 		cmd.Start,
 		cmd.Stop,
 	}
-
 	err := appCli.Run(os.Args)
 	if err != nil {
-		Log.Error("application init error:%v", err)
+		logker.Error("application init error:%v", err)
 	}
 }
