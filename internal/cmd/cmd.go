@@ -13,35 +13,56 @@ import (
 	"github.com/urfave/cli"
 )
 
-// Start program start command.
-var Start = cli.Command{
-	// Command name
-	Name: "start",
-	// Command abbreviation
-	Aliases: []string{"up"},
-	// Command usage notes, here will show how to use the command when you enter the program name -help
-	Usage: "FastMQ program start command✅.\n",
-	// Command processing function
-	Action: func(c *cli.Context) error {
-		//c.Args().First()
-		app.EchoInfo()
-		logker.Debug("%s", "application start running.")
-		time.Sleep(20 * time.Second)
-		return nil
-	},
-}
+var (
 
-// Stop program stop command.
-var Stop = cli.Command{
+	// whether enable  backgrund running
+	isBackgrund bool
 
-	Name: "stop",
+	// Start program start command.
+	Start = cli.Command{
+		// Command name
+		Name: "start",
+		// Command abbreviation
+		Aliases: []string{"up"},
+		// Command usage notes, here will show how to use the command when you enter the program name -help
+		Usage: "FastMQ program start command✅.\n",
+		// Command processing function
+		Action: func(c *cli.Context) error {
+			//c.Args().First()
+			app.EchoInfo()
 
-	Aliases: []string{"down"},
+			if isBackgrund {
+				logker.Info("%s", "FastMQ serve start up.")
+				logker.Info("%s", "FastMQ is enable daemon mode running.")
+			} else {
+				logker.Info("%s", "FastMQ serve start up.")
+			}
+			time.Sleep(time.Second * 5)
+			return nil
+		},
+	}
+	// Stop program stop command.
+	Stop = cli.Command{
 
-	Usage: "FastMQ program stop command❎.\n",
+		Name: "stop",
 
-	Action: func(c *cli.Context) error {
-		// STOP
-		return nil
-	},
+		Aliases: []string{"down"},
+
+		Usage: "FastMQ program stop command❎.\n",
+
+		Action: func(c *cli.Context) error {
+			// STOP
+			return nil
+		},
+	}
+)
+
+func init() {
+	Start.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:        "daemon, d",
+			Usage:       "Whether the program is running in the background.",
+			Destination: &isBackgrund,
+		},
+	}
 }
