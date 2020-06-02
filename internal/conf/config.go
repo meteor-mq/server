@@ -3,7 +3,7 @@
 // Author: SDing <deen.job@qq.com>
 // License that can be found in the LICENSE file.
 
-package server
+package conf
 
 import (
 	"os"
