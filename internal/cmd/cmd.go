@@ -85,7 +85,9 @@ var (
 			}
 			logker.Info("%s", "FastMQ serve start up.")
 			mq := app.NewMQServer(conf.LoadOption())
-			mq.Start()
+			if err := mq.Start(); err != nil {
+				return err
+			}
 			//Daemon(0, 0)
 			return nil
 		},
@@ -124,8 +126,13 @@ func daemon() {
 	// cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		logker.Info("FastMQ serve start failed. Err: %v", err)
-		os.Exit(1)
+		panic(err)
+		//os.Exit(1)
+	}
+	if pid, _ := ioutil.ReadFile(pidPath); string(pid) != "" {
+		logker.Warning("%s", "FastMQ is running.")
+		time.Sleep(time.Second * 2)
+		os.Exit(0)
 	}
 	ioutil.WriteFile(pidPath, []byte(fmt.Sprintf("%d", cmd.Process.Pid)), 0666)
 	isBackgrund = false
@@ -136,6 +143,7 @@ func kill() {
 	if err == nil {
 		exec.Command("bash", "-c", "kill -9 "+string(pid)).Start()
 		logker.Warning("%s", "FastMQ close successful.👋")
+		ioutil.WriteFile(pidPath, []byte(nil), 0666)
 		time.Sleep(5 * time.Second)
 		return
 	}

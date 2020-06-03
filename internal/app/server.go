@@ -23,9 +23,9 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"net"
-	"os"
 	"strconv"
 	"strings"
 
@@ -35,7 +35,9 @@ import (
 
 var (
 	// data buffer
-	buffers [1024]byte
+	buffers        [1024]byte
+	errCreateServe = errors.New("create tcp server error")
+	errAcceptConn  = errors.New("tcp accept error")
 )
 
 // MQServer is message queue.
@@ -68,17 +70,15 @@ func NewMQServer(option *conf.Option) *MQServer {
 }
 
 // Start START MqServer
-func (ms *MQServer) Start() {
+func (ms *MQServer) Start() error {
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", ms.Address, ms.Port))
 	if err != nil {
-		panic("create tcp server error!!!")
-		os.Exit(1)
+		return errCreateServe
 	}
 	for {
 		accept, err := listen.Accept()
 		if err != nil {
-			panic("tcp accept error!!!")
-			os.Exit(1)
+			return errAcceptConn
 		}
 		go ms.handleConn(accept)
 	}
