@@ -46,6 +46,7 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"time"
 
 	"github.com/fast-mq/server/internal/app"
 	"github.com/fast-mq/server/internal/conf"
@@ -56,13 +57,13 @@ import (
 var (
 	// ErrStartUp START UP ERROR
 	ErrStartUp = errors.New("daemon start error")
+	// whether enable  backgrund running
+	isBackgrund bool
+	processID   int = -1
+	pidPath         = "fast_mq.pid"
 )
 
 var (
-
-	// whether enable  backgrund running
-	isBackgrund bool
-
 	// Start program start command.
 	Start = cli.Command{
 		// Command name
@@ -73,13 +74,13 @@ var (
 		Usage: "FastMQ program start command✅.\n",
 		// Command processing function
 		Action: func(c *cli.Context) error {
-			//c.Args().First()
 			app.EchoInfo()
 			if isBackgrund {
-				daemon()
 				logker.Info("%s", "FastMQ is enable daemon mode running.")
-				// 延迟5秒钟因为exec在调用bash需要一点时间
-				// time.Sleep(time.Second * 3)
+				daemon()
+				logker.Info("FastMQ PID: %d running", processID)
+				// 延迟3秒钟因为exec在调用bash需要一点时间
+				time.Sleep(time.Second * 3)
 				return nil
 			}
 			logker.Info("%s", "FastMQ serve start up.")
@@ -100,6 +101,7 @@ var (
 
 		Action: func(c *cli.Context) error {
 			// STOP
+			kill()
 			return nil
 		},
 	}
@@ -118,16 +120,26 @@ func init() {
 func daemon() {
 	cmd := exec.Command("bash", "-c", "./fast_mq up")
 	// 将其他命令传入生成出的进程
-	cmd.Stdin = os.Stdin // 给新进程设置文件描述符，可以重定向到文件中
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	// cmd.Stdin = os.Stdin // 给新进程设置文件描述符，可以重定向到文件中
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		logker.Info("FastMQ serve start failed. Err: %v", err)
-		//os.Exit(1)
+		os.Exit(1)
 	}
-	logker.Info("FastMQ PID = %d running.", cmd.Process.Pid)
-	ioutil.WriteFile("fast_mq.pid", []byte(fmt.Sprintf("%d", cmd.Process.Pid)), 0666)
+	ioutil.WriteFile(pidPath, []byte(fmt.Sprintf("%d", cmd.Process.Pid)), 0666)
 	isBackgrund = false
+	processID = cmd.Process.Pid
+}
+func kill() {
+	pid, err := ioutil.ReadFile(pidPath)
+	if err == nil {
+		exec.Command("bash", "-c", "kill -9 "+string(pid)).Start()
+		logker.Warning("%s", "FastMQ close successful.👋")
+		time.Sleep(5 * time.Second)
+		return
+	}
+	panic("FastMQ pid file not fond.！！！")
 }
 
 // Daemon 守护进程

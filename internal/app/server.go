@@ -25,6 +25,7 @@ package app
 import (
 	"fmt"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 
@@ -70,19 +71,21 @@ func NewMQServer(option *conf.Option) *MQServer {
 func (ms *MQServer) Start() {
 	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", ms.Address, ms.Port))
 	if err != nil {
-		fmt.Println("create tcp server error:%v", err)
+		panic("create tcp server error!!!")
+		os.Exit(1)
 	}
 	for {
 		accept, err := listen.Accept()
 		if err != nil {
-			fmt.Println("tcp accept error:", err)
+			panic("tcp accept error!!!")
+			os.Exit(1)
 		}
 		go ms.handleConn(accept)
 	}
 }
 
 func (ms *MQServer) handleConn(con net.Conn) {
-	for {
+	for con != nil {
 		ip := strings.Split(con.RemoteAddr().String(), ":")[0]
 		logker.Warning("ip = %s", ip)
 		n, _ := con.Read(buffers[:])
