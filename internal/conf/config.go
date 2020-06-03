@@ -6,9 +6,9 @@
 package conf
 
 import (
-	"os"
 	"strings"
 
+	"github.com/higker/logker"
 	"gopkg.in/ini.v1"
 )
 
@@ -24,6 +24,8 @@ const (
 	DefaultPort = "9598"
 	// DefaultAddress  default address
 	DefaultAddress = "127.0.0.1"
+	// DefaultPath default config file path
+	DefaultPath = "./config.ini"
 )
 
 // Option is create FastMQ server parameter
@@ -56,14 +58,19 @@ func NewConfig() *Option {
 	return &Option{}
 }
 
-// loadConfigurationFile
-func loadConfig(path string) Option {
+// LoadOption load Configuration File,return option pointer
+func LoadOption() *Option {
+	return LoadConfig(DefaultPath)
+}
+
+// LoadConfig load Configuration File
+func LoadConfig(path string) *Option {
 	cfg, err := ini.Load(path)
 	if err != nil {
-		Log.Error("loading config file error:%s", err)
-		os.Exit(1)
+		logker.Error("loading config file error:%s", err)
+		//os.Exit(1)
 	}
-	return Option{
+	return &Option{
 		Address: cfg.Section("option").Key("BindIP").String(),
 		Port:    cfg.Section("option").Key("BindPort").String(),
 		AllowIP: func() []string {

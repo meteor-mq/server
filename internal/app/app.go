@@ -20,12 +20,13 @@ const (
 	PasswordPerfix = "Your serve admin Password:"
 	// ConfigFile config file path info
 	ConfigFile = "Using config file: ~/.config/code-server/config.ini"
+	// Bootstrap App entrance
+	// Bootstrap = bootstrap()
 )
 
-// Bootstrap FastMQ boot & application entrance
-// func Bootstrap() {
+//  bootstrap FastMQ boot & application entrance
+//  func bootstrap() {
 // 	appCli := cli.NewApp()
-
 // 	appCli.Name = "Fast Message Queue"
 
 // 	appCli.Usage = "is light weight message queue middleware 🚀."

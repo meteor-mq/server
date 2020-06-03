@@ -40,11 +40,22 @@
 package cmd
 
 import (
-	"time"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"syscall"
 
 	"github.com/fast-mq/server/internal/app"
+	"github.com/fast-mq/server/internal/conf"
 	"github.com/higker/logker"
 	"github.com/urfave/cli"
+)
+
+var (
+	// ErrStartUp START UP ERROR
+	ErrStartUp = errors.New("daemon start error")
 )
 
 var (
@@ -64,14 +75,17 @@ var (
 		Action: func(c *cli.Context) error {
 			//c.Args().First()
 			app.EchoInfo()
-
 			if isBackgrund {
-				logker.Info("%s", "FastMQ serve start up.")
+				daemon()
 				logker.Info("%s", "FastMQ is enable daemon mode running.")
-			} else {
-				logker.Info("%s", "FastMQ serve start up.")
+				// 延迟5秒钟因为exec在调用bash需要一点时间
+				// time.Sleep(time.Second * 3)
+				return nil
 			}
-			time.Sleep(time.Second * 5)
+			logker.Info("%s", "FastMQ serve start up.")
+			mq := app.NewMQServer(conf.LoadOption())
+			mq.Start()
+			//Daemon(0, 0)
 			return nil
 		},
 	}
@@ -99,4 +113,58 @@ func init() {
 			Destination: &isBackgrund,
 		},
 	}
+}
+
+func daemon() {
+	cmd := exec.Command("bash", "-c", "./fast_mq up")
+	// 将其他命令传入生成出的进程
+	cmd.Stdin = os.Stdin // 给新进程设置文件描述符，可以重定向到文件中
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		logker.Info("FastMQ serve start failed. Err: %v", err)
+		//os.Exit(1)
+	}
+	logker.Info("FastMQ PID = %d running.", cmd.Process.Pid)
+	ioutil.WriteFile("fast_mq.pid", []byte(fmt.Sprintf("%d", cmd.Process.Pid)), 0666)
+	isBackgrund = false
+}
+
+// Daemon 守护进程
+func Daemon(nochdir, noclose int) (int, error) {
+	// already a daemon
+	if syscall.Getppid() == 1 {
+		/* Change the file mode mask */
+		syscall.Umask(0)
+
+		if nochdir == 0 {
+			os.Chdir("/")
+		}
+
+		return 0, nil
+	}
+
+	files := make([]*os.File, 3, 6)
+	if noclose == 0 {
+		nullDev, err := os.OpenFile("/dev/null", 0, 0)
+		if err != nil {
+			return 1, err
+		}
+		files[0], files[1], files[2] = nullDev, nullDev, nullDev
+	} else {
+		files[0], files[1], files[2] = os.Stdin, os.Stdout, os.Stderr
+	}
+
+	dir, _ := os.Getwd()
+	sysattrs := syscall.SysProcAttr{Setsid: true}
+	attrs := os.ProcAttr{Dir: dir, Env: os.Environ(), Files: files, Sys: &sysattrs}
+
+	proc, err := os.StartProcess(os.Args[0], os.Args, &attrs)
+	if err != nil {
+		return -1, fmt.Errorf("can't create process %s: %s", os.Args[0], err)
+	}
+	proc.Release()
+	os.Exit(0)
+
+	return 0, nil
 }

@@ -7,6 +7,7 @@ module github.com/fast-mq/server
 go 1.14
 
 require (
+	github.com/VividCortex/godaemon v0.0.0-20150910212227-3d9f6e0b234f
 	github.com/fatih/color v1.9.0
 	github.com/higker/logker v1.2.2
 	github.com/mattn/go-colorable v0.1.6 // indirect
