@@ -40,7 +40,7 @@ var (
 	errAcceptConn  = errors.New("tcp accept error")
 )
 
-// MQServer is message queue.
+// MQServer is message queue server.
 type MQServer struct {
 	// Bind IP
 	Address string
