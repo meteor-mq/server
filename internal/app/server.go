@@ -99,6 +99,7 @@ func (ms *MQServer) checkClient(con net.Conn) {
 	for _, allow := range ms.AllowIP {
 		if allow == ip {
 			ms.handleConn(con)
+			break
 		}
 	}
 	con.Write([]byte("your ip address not at allow list."))
