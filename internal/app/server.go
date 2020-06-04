@@ -80,7 +80,7 @@ func (ms *MQServer) Start() error {
 		if err != nil {
 			return errAcceptConn
 		}
-		go ms.handleConn(accept)
+		go ms.checkClient(accept)
 	}
 }
 
@@ -91,4 +91,16 @@ func (ms *MQServer) handleConn(con net.Conn) {
 		n, _ := con.Read(buffers[:])
 		logker.Warning("%v", string(buffers[:n]))
 	}
+}
+
+// 验证客户端
+func (ms *MQServer) checkClient(con net.Conn) {
+	ip := strings.Split(con.RemoteAddr().String(), ":")[0]
+	for _, allow := range ms.AllowIP {
+		if allow == ip {
+			ms.handleConn(con)
+		}
+	}
+	con.Write([]byte("your ip address not at allow list."))
+	con.Close()
 }
