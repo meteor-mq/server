@@ -4,3 +4,9 @@
 // License that can be found in the LICENSE file.
 
 package queue
+
+// Queue interface
+type Queue interface {
+	Writer([]byte) error
+	Read([]byte) error
+}

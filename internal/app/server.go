@@ -38,7 +38,8 @@ var (
 	buffers        [1024]byte
 	errCreateServe = errors.New("create tcp server error")
 	errAcceptConn  = errors.New("tcp accept error")
-	closeFlag      = "Close->|"
+	errClientClose = "Close->|"
+	errAddressMsg  = "Your ip address not at allow list."
 )
 
 // MQServer is message queue server.
@@ -71,8 +72,9 @@ func NewMQServer(option *conf.Option) *MQServer {
 }
 
 // Start START MqServer
-func (ms *MQServer) Start() error {
-	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", ms.Address, ms.Port))
+func (mq *MQServer) Start() error {
+	type this int
+	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", mq.Address, mq.Port))
 	if err != nil {
 		return errCreateServe
 	}
@@ -81,22 +83,21 @@ func (ms *MQServer) Start() error {
 		if err != nil {
 			return errAcceptConn
 		}
-		go ms.checkClient(accept)
+		go mq.checkClient(accept)
 	}
 }
 
-func (ms *MQServer) handleConn(con net.Conn) {
+func handleConn(con net.Conn) {
 	for con != nil {
 		n, _ := con.Read(buffers[:])
 		msg := string(buffers[:n])
 		logker.Warning("%v", msg)
-		if msg == closeFlag {
+		if msg == errClientClose {
 			logker.Error("%s", "客户端连接已经关闭.")
 			con.Close()
 			return
 		}
 	}
-
 }
 
 // 验证客户端
@@ -104,11 +105,11 @@ func (ms *MQServer) checkClient(con net.Conn) {
 	ip := strings.Split(con.RemoteAddr().String(), ":")[0]
 	for _, allow := range ms.AllowIP {
 		if allow == ip {
-			ms.handleConn(con)
+			go handleConn(con)
 			return
 		}
 	}
 	logker.Warning("%s", "There are client IP="+ip+" connection failed.")
-	con.Write([]byte("Your ip address not at allow list."))
+	con.Write([]byte(errAddressMsg))
 	con.Close()
 }
