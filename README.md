@@ -1,2 +1,3 @@
 # fast-mq-server
 Daemon service of  FastMQ
+未开发完成 部分组件还在开发中....
