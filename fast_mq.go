@@ -13,6 +13,7 @@
 // FastMQ is light weight message queue middleware. 🚀
 // FastMQ 一款轻量级的消息队列服务中间件通过Go语言实现。👨‍💻‍
 // Author : SDing <deen.job@qq.com> We hope you can join!🎉🎉
+
 package main
 
 import (
